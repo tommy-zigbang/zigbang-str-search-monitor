@@ -1,0 +1,43 @@
+{
+  "project": "직방 단기임대 네이버 검색 노출 모니터",
+  "base_url": "https://naverapihub.apigw.ntruss.com",
+  "depth": 30,
+  "new_window_days": 7,
+  "queries": [
+    { "q": "직방 단기임대", "type": "brand" },
+    { "q": "직방단기임대", "type": "brand" },
+    { "q": "직방 단기", "type": "brand" },
+    { "q": "단기임대", "type": "category" },
+    { "q": "서울 단기임대", "type": "category" },
+    { "q": "단기임대 앱", "type": "category" },
+    { "q": "한달살기 원룸", "type": "category" },
+    { "q": "단기임대 호스트", "type": "category" }
+  ],
+  "verticals": ["blog", "cafearticle", "news", "webkr"],
+  "owned_assets": [
+    { "label": "공식블로그", "pattern": "blog\\.naver\\.com/zigbang(/|$|\\?)" },
+    { "label": "호스트사이트", "pattern": "str\\.zigbang\\.com" },
+    { "label": "직방stay", "pattern": "zigbang\\.com/stay" },
+    { "label": "네이버클립", "pattern": "clip\\.naver\\.com/@zigbang" },
+    { "label": "직방기타", "pattern": "(^|[/.])zigbang\\.com" }
+  ],
+  "brand_mention": "직방|zigbang",
+  "competitors": [
+    { "key": "33m2", "label": "삼삼엠투", "pattern": "삼삼엠투|33m2|33엠투" },
+    { "key": "liveanywhere", "label": "리브애니웨어", "pattern": "리브애니웨어|liveanywhere" },
+    { "key": "enkor", "label": "엔코스테이", "pattern": "엔코스테이|enkor" }
+  ],
+  "trend": {
+    "lookback_days": 90,
+    "keyword_groups": [
+      { "groupName": "직방 단기임대", "keywords": ["직방 단기임대", "직방단기임대", "직방 단기"] },
+      { "groupName": "삼삼엠투", "keywords": ["삼삼엠투", "33m2"] },
+      { "groupName": "리브애니웨어", "keywords": ["리브애니웨어"] },
+      { "groupName": "단기임대(카테고리)", "keywords": ["단기임대", "단기 임대", "한달살기 원룸"] }
+    ]
+  },
+  "alerts": {
+    "core_queries": ["직방 단기임대", "직방단기임대", "단기임대"],
+    "rank_change_threshold": 3
+  }
+}
