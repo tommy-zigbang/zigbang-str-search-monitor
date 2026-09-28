@@ -1,0 +1,59 @@
+name: daily-naver-search-monitor
+
+on:
+  schedule:
+    - cron: "0 0 * * *"   # 매일 09:00 KST (UTC 00:00)
+  workflow_dispatch: {}    # Actions 탭에서 수동 실행
+  push:
+    branches: [main]       # 코드/설정 변경 시 대시보드 재배포
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: naver-search-monitor
+  cancel-in-progress: false
+
+jobs:
+  collect-and-deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    env:
+      NAVER_API_HUB_CLIENT_ID: ${{ secrets.NAVER_API_HUB_CLIENT_ID }}
+      NAVER_API_HUB_CLIENT_SECRET: ${{ secrets.NAVER_API_HUB_CLIENT_SECRET }}
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Collect NAVER API HUB search data
+        if: github.event_name != 'push'
+        run: |
+          if [ -z "$NAVER_API_HUB_CLIENT_ID" ] || [ -z "$NAVER_API_HUB_CLIENT_SECRET" ]; then
+            echo "::warning::API 키(Secrets)가 아직 없어서 수집을 건너뛰어요. 대시보드는 샘플 데이터로 배포돼요."
+            exit 0
+          fi
+          python3 collector.py --slack-digest
+
+      - name: Commit data
+        if: github.event_name != 'push'
+        run: |
+          git config user.name  "search-monitor-bot"
+          git config user.email "search-monitor-bot@users.noreply.github.com"
+          mkdir -p data
+          git add data
+          git diff --cached --quiet || { git commit -m "data: $(TZ=Asia/Seoul date +%F) naver search snapshot" && git push; }
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+      - id: deploy
+        uses: actions/deploy-pages@v4
